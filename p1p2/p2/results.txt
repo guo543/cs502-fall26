@@ -1,0 +1,73 @@
+rm -f lex.yy.c y.tab.c y.tab.h y.dot y.output interpret lex.yy.o parser
+bison -v -y -d -g -t --verbose parser.y
+lex -l parser.l
+g++ -c lex.yy.c
+g++ stt.cc typecheck.cc ast.cc y.tab.c lex.yy.o  -g -o parser -lfl
+####################
+wang
+####################
+[92m[ PASS ][0m NoMain
+[92m[ PASS ][0m NestedIf
+[92m[ PASS ][0m TwoClasses
+[92m[ PASS ][0m NewMain
+[91m[ FAIL ][0m MultipleErrorsCombined
+Got error: 'b'Type violation in line 14\nType violation in line 16\nType violation in line 17\nType violation in line 18\n''
+Expected : 'b'Type violation in line 14\nType violation in line 15\nType violation in line 16\nType violation in line 17\nType violation in line 18\n''
+Run './parser /homes/cs352/Spring23/Grading/tarindu/p2test/tests/testcases/type/MultipleErrorsCombined.java'
+[92m[ PASS ][0m MultipleErrorsDoubleDecl
+[92m[ PASS ][0m StatementScopeRedefineSym
+[92m[ PASS ][0m LiteralExprIntToArray
+[92m[ PASS ][0m StatementReturnWrongType
+[92m[ PASS ][0m UnaryExprUnaryBool
+[92m[ PASS ][0m StatementMethodCallWrongTypes
+[92m[ PASS ][0m StatementVarDeclCheckArgs
+[92m[ PASS ][0m LValExprDiffType
+[92m[ PASS ][0m ParseIntNotString
+[92m[ PASS ][0m MethodDeclWrongType
+[92m[ PASS ][0m StatementVarDeclRedefinition
+[92m[ PASS ][0m StatementScopeRedefinition
+[92m[ PASS ][0m BinaryExprLogicalToBool
+[92m[ PASS ][0m StaticVarDeclTypeStillRequired
+[92m[ PASS ][0m NewExprDifferentNewType
+[92m[ PASS ][0m BinaryExprIntInBool
+[92m[ PASS ][0m BinaryExprInvalidOperand
+[92m[ PASS ][0m LiteralExprBoolToInt
+[92m[ PASS ][0m StatementPrintBadExpr2
+[91m[ FAIL ][0m MultipleErrorsVarDecl
+Got error: 'b'Type violation in line 19\nType violation in line 20\n''
+Expected : 'b'Type violation in line 19\nType violation in line 20\nType violation in line 21\nType violation in line 21\nType violation in line 21\n''
+Run './parser /homes/cs352/Spring23/Grading/tarindu/p2test/tests/testcases/type/MultipleErrorsVarDecl.java'
+[92m[ PASS ][0m MethodDeclBadReturnType
+[92m[ PASS ][0m StatementAssignWrongTypes
+[92m[ PASS ][0m MethodDeclAssignMethod2
+[92m[ PASS ][0m StatementPrintBadExpr
+[92m[ PASS ][0m MethodDeclBadExprInCall
+[92m[ PASS ][0m MethodDeclAssignMethod
+[92m[ PASS ][0m MethodDeclRedefinition
+[92m[ PASS ][0m MethodDeclTooFewArgs
+[92m[ PASS ][0m StatementAssignBadLValue
+[91m[ FAIL ][0m UnaryExprNotEvalBool
+Got error: 'b'''
+Expected : 'b'Type violation in line 5\n''
+Run './parser /homes/cs352/Spring23/Grading/tarindu/p2test/tests/testcases/type/UnaryExprNotEvalBool.java'
+[92m[ PASS ][0m NewExprBoolInNew
+[92m[ PASS ][0m StaticVarDeclRedefinition
+[92m[ PASS ][0m NewExprArrayInNew
+[92m[ PASS ][0m LValExprTooManyBrackets
+[91m[ FAIL ][0m MultipleErrorsStaticVars
+Got error: 'b'Type violation in line 8\n''
+Expected : 'b'Type violation in line 8\nType violation in line 9\n''
+Run './parser /homes/cs352/Spring23/Grading/tarindu/p2test/tests/testcases/type/MultipleErrorsStaticVars.java'
+[92m[ PASS ][0m StatementAssignBadExpr
+[92m[ PASS ][0m StatementAssignBadLValue2
+[92m[ PASS ][0m MethodDeclAssignIntToBool
+[92m[ PASS ][0m StatementConditionalRecurseError
+[92m[ PASS ][0m UnaryExprLength
+[92m[ PASS ][0m UnaryExprUnaryString
+[92m[ PASS ][0m StatementConditionalWhile.NotBoolCond
+[92m[ PASS ][0m BinaryExprArrayInOp
+[92m[ PASS ][0m StatementConditionalIf.NotBoolCond
+[92m[ PASS ][0m UnaryExprNotInt
+Ran 100 test. 0 syntax failures 4 type failures
+####################
+

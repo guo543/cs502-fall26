@@ -1,0 +1,11 @@
+####################
+
+####################
+TEST 1
+/u/riker/u98/cs352/Spring23/Grading/tarindu/p2test/p2grading/grading22/miao29.Z/p2/build/linux/x86_64/release/parser < /homes/cs352/Spring23/Grading/tarindu/p2test/tests/testcases/syntax/NoMain.java
+/u/riker/u98/cs352/Spring23/Grading/tarindu/p2test/p2grading/grading22/miao29.Z/p2/build/linux/x86_64/release
+[Errno 2] No such file or directory: '/u/riker/u98/cs352/Spring23/Grading/tarindu/p2test/p2grading/grading22/miao29.Z/p2/build/linux/x86_64/release/parser /homes/cs352/Spring23/Grading/tarindu/p2test/tests/testcases/syntax/NoMain.java'
+TEST 2
+Timed out
+####################
+

@@ -1,0 +1,183 @@
+            PJ502 language Lexical and Syntax Forms 
+			(Pseudo-Java for CS502)
+
+PJ502 is a small programming language in a compiler course at Purdue University.
+Its syntax takes the form of the Java language, albeit a small subset of Java.
+Its type rules and externally observable execution result also conforms to Java,
+except for a few language components that may have deviations to simplify compiler
+implementation in a short semester. Such deviations, if needed, will be stated in
+project handouts.
+
+The execution model is entirely different from Java.
+A Java compiler compiles the source file into Java bytecode that is interpreted by
+a Java virtual machine, PJ502 is to be compiled into native assembly code that can be
+assembled by the GNU assembler into machine code. There is no automatic garbage collection
+performed during the execution of the machine code compiled from a PJ502 program.
+If a PJ502 program deletes a dynamically allocated data structure, it does so by
+calling a public method, free(), that is to be compiled into a call to the GNU's standard
+library routine free().
+
+The PJ502 language descended many years ago from the MiniJava language introduced
+in a compiler textbook titled "Modern-Compiler-Implementation-in-Java". Over the years,
+the language has evolved through many revisions and additions to meet the needs from
+the evolving compiler projects locally. Due to the entirely different execution model
+from Java and possible deviations in the semantics for certain program components,
+we now has removed the name of Java from this teaching-oriented language to avoid
+confusions, even though it adopts the syntax form of a subset of Java.
+
+This document cocerns only the syntax form. The type rules and operation semantics
+will be specified in projects that deal with these matters.
+
+*********************
+* TOKEN DEFINITIONS *
+*********************
+
+Identifiers: An identifier is a finite sequence of letters, digits, and underscores,
+starting with a letter. Uppercase letters are distinguished from lowercase. 
+In this specification, the symbol id stands for an identifier.
+
+Integer literals: A sequence of decimal digits is an unsigned integer constant 
+that denotes the corresponding integer value. Leading zeros are allowed.
+
+String literals: A string of ASCII characters, enclosed by a pair of double
+quotation marks ", forms a string literal in MiniJava+. No other double
+quotation marks are allowed inside the string literal unless each of them is
+immediately preceded by a backslash \.  Note: As in Java, Escape sequences
+that start with a backslash may appear in a string literal, but this document
+does not discuss the specifics.
+
+In this specification, the symbol INTEGER_LITERAL stands for an integer 
+constant and the symbol STRING_LITERAL stands for a quoted string, e.g.
+ "hello world".
+
+Binary operators: A binary operator is one of the following
+
+&& || < >  <= >= == != + - * /
+
+To keep this document compact, in the production rules listed below,
+the symbol <op> stands for any one of the binary operators listed above.
+However, each of these operators must form its own token class and
+the grammar rewritten by the students in the compiler projects must
+enumerate specific operators in the production rules, i.e. replacing <op> by
++, -, *, /, etc, respectively. This is because, obviously, the assembly code
+generated for different operations will be different.
+
+Special Notes Concerning Lexical Rules:
+
+(1) We treat ++ as a single token, even though this token does not appear in 
+any production rules. This is to avoid treating
+++ as two + operations, which would have a different semantic meaning 
+than in Java. Hence, expression a + + b is valid (notice the space between
+two + characters), but a ++ b will violate the syntax rule in MiniJava+.
+Likewise, we treat -- as a single token, even though this token does not appear in
+any production rules..
+
+(2) A comment may appear between any two tokens. There are two forms 
+of comments: One starts with /*, ends with */, with no other */ in between;
+another begins with // and goes to the end of the line.
+
+********************
+* PRODUCTION RULES *
+********************
+
+The following production rules, which are written in extended BNF, 
+define the syntax forms of PJ502 program constructs. However, to 
+build a correct parser using Yacc/Bison tool in our projects, the students 
+will need to rewrite the production rules such that the compiler built can
+successfully analyze the program constructs and generate correct assembly code.
+The correct production rules will depend on whether the built compiler parses
+the source code top-down vs. bottom-up, as will be discussed in the lectures.
+
+The grammar rewriting involves two aspects. First, the meta-symbols
+must be removed, by introducing new nonterminals and new production rules to
+define equivalent syntax forms. Second, production rules must be rewritten
+in a way such that the compiler built does not encounter "parsing conflicts",
+as will be explained in the lectures and project handouts.
+
+
+NOTE 1: As discussed in class, with extended-BNF used below,
+the notation N*, where N is a nonterminal, means 0, 1, or more appearances of N.
+N+, on the other hand, means one or more such appearances.
+A vertical bar | means a selection between alternative phrases in the right-hand side.
+A question mark ? means the grammar symbol or a phrase enclosed by a pair parenthese
+ithat precedes ? is optional, e.g. (<phrase>)? means that the entire phrase denoted
+by <phrase> is optional.
+
+If any of symbols *, ?, (, ) in a production rule is actually a part of the
+language for which the compiler is built and therefore should not be treated as
+a meta-symbol, then, they will be quoted by a pair of " in the production rule.
+
+
+NOTE 2: In the production rules, the symbol “:” means “derives”. We avoid using “->” 
+in case it may be confused with operators in the right-hand side.  ":" followed by
+a blank right-hand side indicates an empty rule (i.e.  with the right-hand side being epsilon.
+
+NOTE3: Program is the start nonterminal.
+
+------------- The Production Rules -------------
+
+ Program  : ClassDecl+
+
+ ClassDecl : class id (extends id)? { (VarDecl | MethodDecl)* }
+           
+   VarDecl : Modifiers? Type id (= Exp)? (, id (= Exp)? )* ;
+
+MethodDecl : Modifiers? (void | Type) id "(" FormalList? ")" {Statement*}
+
+Modifiers : Access | State | Access State | State Access
+
+Access : private | public
+
+State  : static
+
+FormalList : Type id (, Type id)*
+
+      Type : PrimeType
+           : Type [ ]
+
+ PrimeType : int
+           : boolean
+           : id
+	   : String
+
+ Statement : VarDecl
+	   : { Statement* }
+           : if "(" Exp ")" Statement else Statement
+           : if "(" Exp ")" Statement
+           : while "(" Exp ")" Statement
+           : System.out.println "(" Exp ")" ;
+           : System.out.print "(" Exp ")" ;
+           : LeftValue = Exp ;
+           : this . LeftValue = Exp ;
+	   : return Exp ;
+	   : MethodCall ;
+
+MethodCall : LeftValue "(" ExpList? ")" 
+	   : this . LeftValue "(" ExpList? ")"
+
+       Exp : Exp op Exp
+           : ! Exp
+           : + Exp       
+           : - Exp
+           : "(" Exp ")"
+	   : LeftValue
+           : LeftValue . length
+	   : this . LeftValue
+           : this . LeftValue . length
+           : INTEGER_LITERAL
+	   : STRING_LITERAL
+           : true
+           : false
+           : MethodCall
+	   : new id "(" ")"
+	   : new PrimeType Index
+
+
+     Index :  [ Exp ]
+           : Index [ Exp ]
+
+   ExpList : Exp (, Exp )*
+
+LeftValue  : id
+	   : LeftValue [ Exp ]
+	   : LeftValue . LeftValue
